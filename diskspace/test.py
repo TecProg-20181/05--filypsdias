@@ -1,13 +1,13 @@
 from diskspace import bytes_to_readable, subprocess_check_output, 
 from diskspace import print_tree, calculate_percentage, du_command, percentage_args
+
 import unittest
+import os
+import StringIO
+import subprocess
 import mock
 import io
 import sys
-import os
-import subprocess
-import StringIO
-
 
 
 class DiskspaceTest(unittest.TestCase):
@@ -32,4 +32,20 @@ class DiskspaceTest(unittest.TestCase):
         result = subprocess_check_output(command)
         self.assertEqual(du_result, result)
 
+    def calculate_percentage_test(self):
+        percentage = calculate_percentage(self.file_tree_node, self.total_size)
+        self.assertTrue(percentage == 100)
+
+    def print_tree_test(self):
+        cap = StringIO.StringIO()
+        sys.stdout = cap
+
+        print_tree(self.file_tree, self.file_tree_node, self.path,
+                   self.largest_size, self.total_size)
+        result = "2.00Kb  100%  /home/teste\n"
+        sys.stdout = sys.__stdout__
+        self.assertEqual(result, cap.getvalue())
+
+if __name__ == '__main__':
+    unittest.main()
   
