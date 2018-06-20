@@ -22,19 +22,15 @@ class DiskspaceTest(unittest.TestCase):
         self.total_size = 4
 
     def bytes_to_readable_test(self):
-        blocks = 224
+        fullblocks = 224
         result = "112.00Kb"
-        self.assertEqual(bytes_to_readable(blocks), result)
+        self.assertEqual(bytes_to_readable(fullblocks), result)
 
     def subprocess_check_output_test(self):
         command = 'du'
         du_result = subprocess.check_output(command)
         result = subprocess_check_output(command)
         self.assertEqual(du_result, result)
-
-    def calculate_percentage_test(self):
-        percentage = calculate_percentage(self.file_tree_node, self.total_size)
-        self.assertTrue(percentage == 100)
 
     def print_tree_test(self):
         cap = StringIO.StringIO()
@@ -45,6 +41,30 @@ class DiskspaceTest(unittest.TestCase):
         result = "2.00Kb  100%  /home/teste\n"
         sys.stdout = sys.__stdout__
         self.assertEqual(result, cap.getvalue())
+
+    def args_tree_view_test(self):
+        fulldepth = 0
+        path = self.path.split("/")[-1]
+        result = '{}{}'.format('   '*fulldepth, os.path.basename(self.path))
+        self.assertEqual(result, path)
+
+    def calculate_percentage_test(self):
+        percentage = calculate_percentage(self.file_tree_node, self.total_size)
+        self.assertTrue(percentage == 100)
+
+    def du_command_default_test(self):
+        abs_directory = self.path
+        cmd = du_command(-1, abs_directory)
+        result = "du  " + self.path
+        self.assertEqual(result, cmd)
+
+    def du_command_test(self):
+        abs_directory = self.path
+        fulldepth = 1
+        cmd = du_command(fulldepth, abs_directory)
+        result = "du -d {} {}".format(fulldepth, self.path)
+        self.assertEqual(result, cmd)
+
 
 if __name__ == '__main__':
     unittest.main()
