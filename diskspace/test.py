@@ -1,11 +1,9 @@
-from diskspace import bytes_to_readable, subprocess_check_output, 
 from diskspace import print_tree, calculate_percentage, duCommand, percentage_args
 
 import unittest
 import os
 import StringIO
 import subprocess
-import mock
 import io
 import sys
 
