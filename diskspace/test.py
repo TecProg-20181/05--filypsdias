@@ -1,5 +1,5 @@
 from diskspace import bytes_to_readable, subprocess_check_output, 
-from diskspace import print_tree, calculate_percentage, du_command, percentage_args
+from diskspace import print_tree, calculate_percentage, duCommand, percentage_args
 
 import unittest
 import os
@@ -33,14 +33,14 @@ class DiskspaceTest(unittest.TestCase):
         self.assertEqual(du_result, result)
 
     def print_tree_test(self):
-        cap = StringIO.StringIO()
-        sys.stdout = cap
+        caps = StringIO.StringIO()
+        sys.stdout = caps
 
         print_tree(self.file_tree, self.file_tree_node, self.path,
                    self.largest_size, self.total_size)
         result = "2.00Kb  100%  /home/teste\n"
         sys.stdout = sys.__stdout__
-        self.assertEqual(result, cap.getvalue())
+        self.assertEqual(result, caps.getvalue())
 
     def args_tree_view_test(self):
         fulldepth = 0
@@ -52,18 +52,27 @@ class DiskspaceTest(unittest.TestCase):
         percentage = calculate_percentage(self.file_tree_node, self.total_size)
         self.assertTrue(percentage == 100)
 
-    def du_command_default_test(self):
+    def duCommand_default_test(self):
         abs_directory = self.path
-        cmd = du_command(-1, abs_directory)
+        cmd = duCommand(-1, abs_directory)
         result = "du  " + self.path
         self.assertEqual(result, cmd)
 
-    def du_command_test(self):
+    def duCommand_test(self):
         abs_directory = self.path
         fulldepth = 1
-        cmd = du_command(fulldepth, abs_directory)
+        cmd = duCommand(fulldepth, abs_directory)
         result = "du -d {} {}".format(fulldepth, self.path)
         self.assertEqual(result, cmd)
+    
+    def show_space_list_test(self):
+        caps = StringIO.StringIO()
+        sys.stdout = caps
+        print_space_list(self.largest_size, self.file_tree,
+                         self.path, self.total_size)
+        result = "  Size   (%)  File\n2.00Kb  100%  {}\n".format(self.path)
+        sys.stdout = sys.__stdout__
+        self.assertEqual(result, caps.getvalue())
 
 
 if __name__ == '__main__':

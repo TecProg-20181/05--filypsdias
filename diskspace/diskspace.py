@@ -39,7 +39,6 @@ args = parser.parse_args()
 def subprocess_check_output(command):
     return subprocess.check_output(command.strip().split(' '))
 
-
 def bytes_to_readable(blocks):
     byts = blocks * 512
     readable_bytes = byts
@@ -50,7 +49,6 @@ def bytes_to_readable(blocks):
 
     labels = ['B', 'Kb', 'Mb', 'Gb', 'Tb']
     return '{:.2f}{}'.format(round(byts/(1024.0**count), 2), labels[count])
-
 
 def print_tree(file_tree, file_tree_node, path, largest_size, total_size,
                depth=0):
@@ -71,6 +69,20 @@ def print_tree(file_tree, file_tree_node, path, largest_size, total_size,
             print_tree(file_tree, file_tree[child], child, largest_size,
                        total_size, depth + 1)
 
+def calculate_percentage(file_tree_node, total_size):
+    fullpercentage = int(file_tree_node['size'] / float(total_size) * 100)
+    return fullpercentage
+
+def percentage_args(percentage):
+    if percentage < args.hide:
+        return  
+
+def duCommand(depth, abs_directory):
+    cmd = 'du '
+    if depth != -1:
+        cmd += '-d {} '.format(depth)
+    cmd += abs_directory
+    return cmd
 
 def show_space_list(directory='.', depth=-1, order=True):
     abs_directory = os.path.abspath(directory)
@@ -134,6 +146,11 @@ def show_space_list(directory='.', depth=-1, order=True):
         )
         largest_size = max(largest_size, len(file_tree_entry['print_size']))
 
+    print(' ' * max(0, largest_size - len('Size')) + 'Size   (%)  File')
+    print_tree(file_tree, file_tree[abs_directory], abs_directory,
+               largest_size, total_size)
+
+def print_space_list(largest_size, file_tree, abs_directory, total_size):
     print(' ' * max(0, largest_size - len('Size')) + 'Size   (%)  File')
     print_tree(file_tree, file_tree[abs_directory], abs_directory,
                largest_size, total_size)
