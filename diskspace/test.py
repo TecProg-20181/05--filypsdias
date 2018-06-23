@@ -1,3 +1,4 @@
+from diskspace import *
 from diskspace import print_tree, calculate_percentage, duCommand, percentage_args
 
 import unittest
@@ -19,18 +20,18 @@ class DiskspaceTest(unittest.TestCase):
         self.largest_size = 6
         self.total_size = 4
 
-    def bytes_to_readable_test(self):
+    def test_test_bytes_to_readable(self):
         fullblocks = 224
         result = "112.00Kb"
         self.assertEqual(bytes_to_readable(fullblocks), result)
 
-    def subprocess_check_output_test(self):
+    def test_subprocess_check_output(self):
         command = 'du'
         du_result = subprocess.check_output(command)
         result = subprocess_check_output(command)
         self.assertEqual(du_result, result)
 
-    def print_tree_test(self):
+    def test_print_tree(self):
         caps = StringIO.StringIO()
         sys.stdout = caps
 
@@ -40,30 +41,30 @@ class DiskspaceTest(unittest.TestCase):
         sys.stdout = sys.__stdout__
         self.assertEqual(result, caps.getvalue())
 
-    def args_tree_view_test(self):
+    def test_args_tree_view(self):
         fulldepth = 0
         path = self.path.split("/")[-1]
         result = '{}{}'.format('   '*fulldepth, os.path.basename(self.path))
         self.assertEqual(result, path)
 
-    def calculate_percentage_test(self):
+    def test_calculate_percentage(self):
         percentage = calculate_percentage(self.file_tree_node, self.total_size)
         self.assertTrue(percentage == 100)
 
-    def duCommand_default_test(self):
+    def test_duCommand_default(self):
         abs_directory = self.path
         cmd = duCommand(-1, abs_directory)
         result = "du  " + self.path
         self.assertEqual(result, cmd)
 
-    def duCommand_test(self):
+    def test_duCommand(self):
         abs_directory = self.path
         fulldepth = 1
         cmd = duCommand(fulldepth, abs_directory)
         result = "du -d {} {}".format(fulldepth, self.path)
         self.assertEqual(result, cmd)
     
-    def show_space_list_test(self):
+    def test_show_space_list(self):
         caps = StringIO.StringIO()
         sys.stdout = caps
         print_space_list(self.largest_size, self.file_tree,
